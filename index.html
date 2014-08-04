@@ -81,6 +81,11 @@
             closeBtnInside: true,
             callbacks : {
               elementParse : function(item){
+                
+                //Stop loading new tweets while in user stream
+                clearInterval(updateTweetTime);
+                clearInterval(checkForNewTweets);
+
                 var usernameClicked = this.st.el.data('user');
 
                 //Open popup HTML
@@ -98,6 +103,15 @@
                 //Close popup HTML
                 src += '</div>';
                 item.src = src;
+              },
+              close: function()
+              {
+                console.log("CLOSING USER VIEW");
+                //Start loading new tweets when exiting user stream
+                updateTweetTime = setInterval(updateTweets, 60000);
+                checkForNewTweets = setInterval(function(){
+                  findAndAddNewTweets(streams.home);
+                }, 60000);
               }
             },
             items: {
@@ -108,13 +122,15 @@
         }
 
         //Every minute, loop through tweets on screen to update their user friendly post time
-        var updateTweetTime = setInterval(function()
+        var updateTweetTime = setInterval(updateTweets, 60000);
+
+        var updateTweets = function()
         {
           $('.postTime').each(function(i, obj)
           {
             $(obj).text(moment($(obj).data("posttime")).fromNow());
           });
-        }, 60000);
+        };
 
       });
 
