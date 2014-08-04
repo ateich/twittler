@@ -4,6 +4,7 @@
     <script src="jquery.js"></script>
     <script type="date.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
     <script>
@@ -31,10 +32,12 @@
 
         function addTweetTo(tweet, appendTo)
         {
-          var $tweet = $('<div><p></p></div>');
+          var $tweet = $('<div class="tweet"></div>');
 
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+          $tweet.append('<p class="username">' + tweet.user + '</p>');
+          $tweet.append('<p>' + tweet.message + '</p>');
           $tweet.append('<p>' + tweet.created_at + '</p>');
+          $tweet.append('<hr/>');
 
           $tweet.appendTo(appendTo);
         }
