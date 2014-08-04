@@ -22,7 +22,7 @@
 
         var tweetCount = 0;
 
-        findAndAddNewTweets();
+        findAndAddNewTweets(streams.home);
 
         function addTweetTo(tweet, appendTo)
         {
@@ -40,32 +40,41 @@
 
         //Check for newer tweets every 1 minute
         var checkForNewTweets = setInterval(function(){
-          findAndAddNewTweets();
+          findAndAddNewTweets(streams.home);
         }, 60000);
 
-        function findAndAddNewTweets()
+        function findAndAddNewTweets(stream, element)
         {
-          var $newTweets = $('<div></div>');
-          var index = streams.home.length - 1;
+          var localTweetCount = 0;
 
-          var tweet = streams.home[index];
-          //var latestTweetTime = Date.parse(tweet.created_at);
+          if(!element)
+          {
+            element = $body;
+            localTweetCount = tweetCount;
+          }
+
+          var $newTweets = $('<div></div>');
+          var index = stream.length - 1;
+
+          var tweet = stream[index];
 
           //There are new tweets to be added to the screen
-          while(streams.home.length > tweetCount)
+          while(stream.length > localTweetCount)
           {
             addTweetTo(tweet, $newTweets);
 
-            tweet = streams.home[index];
             index-=1;
+            tweet = stream[index];
 
-            //lastTweetTime = latestTweetTime;
-            //lastTweetTime = Date.parse(tweet.created_at);
-            tweetCount += 1;
+            localTweetCount += 1;
           }
 
-          //lastTweetTime = Date.parse(streams.home[0].created_at);
-          $newTweets.prependTo($body);
+          if(!element)
+          {
+            tweetCount = localTweetCount;
+          }
+
+          $newTweets.prependTo(element);
 
           //Enable clicking on username to open user twitter stream
           $('.open-popup-link').magnificPopup({
@@ -73,7 +82,22 @@
             callbacks : {
               elementParse : function(item){
                 var usernameClicked = this.st.el.data('user');
-                item.src = '<div class="white-popup">' + usernameClicked + '</div>';
+
+                //Open popup HTML
+                var src = '<div class="white-popup">';
+
+                //Username at top
+                src += '<div class="username">' + usernameClicked + '</div>';
+
+                //Add Feed
+                var $userTweets = $('<div></div>');
+                findAndAddNewTweets(streams.users[usernameClicked], $userTweets);
+                
+                src += $userTweets.html();
+
+                //Close popup HTML
+                src += '</div>';
+                item.src = src;
               }
             },
             items: {

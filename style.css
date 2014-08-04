@@ -25,9 +25,11 @@ body
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.tweet a .username
+.username
 {
 	font-weight: bold;
+	text-decoration: none;
+	color: black;
 }
 
 .white-popup {
