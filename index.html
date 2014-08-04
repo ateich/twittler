@@ -15,21 +15,11 @@
         $body.html('');
 
         var index = streams.home.length - 1;
-        var lastTweetTime;
+        var lastTweetTime = 0;
 
-        //Loop through and add tweets
-        while(index >= 0){
-          var tweet = streams.home[index];
-          addTweetTo(tweet, $body);
-          index -= 1;
+        var tweetCount = 0;
 
-          //Keep track of the most recent tweets posting time
-          var tweetTime = Date.parse(tweet.created_at);
-          if(!lastTweetTime || tweetTime > lastTweetTime)
-          {
-            lastTweetTime = tweetTime;
-          }
-        }
+        findAndAddNewTweets();
 
         function addTweetTo(tweet, appendTo)
         {
@@ -42,45 +32,46 @@
           $tweet.append('<p class="postTime" data-postTime="' + tweet.created_at + '">' + postTime + '</p>');
           $tweet.append('<hr/>');
 
+          console.log(postTime);
+
           $tweet.appendTo(appendTo);
         }
 
         //Check for newer tweets every 1 minute
         var checkForNewTweets = setInterval(function(){
+          findAndAddNewTweets();
+        }, 60000);
 
+        function findAndAddNewTweets()
+        {
           var $newTweets = $('<div></div>');
           var index = streams.home.length - 1;
 
           var tweet = streams.home[index];
           var latestTweetTime = Date.parse(tweet.created_at);
 
-          if(latestTweetTime > lastTweetTime)
+          //There are new tweets to be added to the screen
+          while(streams.home.length > tweetCount)
           {
-            var tweetsAdded = 0;
-            //There are new tweets to be added to the screen
-            while(latestTweetTime > lastTweetTime)
-            {
-              tweetsAdded+=1;
-              addTweetTo(tweet, $newTweets);
+            addTweetTo(tweet, $newTweets);
 
-              index-=1;
-              tweet = streams.home[index];
+            tweet = streams.home[index];
+            index-=1;
 
-              //lastTweetTime = latestTweetTime;
-              latestTweetTime = Date.parse(tweet.created_at);
-            }
-
-            latestTweetTime = Date.parse(streams.home[0].created_at);
-            $newTweets.prependTo($body);
+            //lastTweetTime = latestTweetTime;
+            lastTweetTime = Date.parse(tweet.created_at);
+            tweetCount += 1;
           }
-        }, 60000);
+
+          //lastTweetTime = Date.parse(streams.home[0].created_at);
+          $newTweets.prependTo($body);
+        }
 
         //Every minute, loop through tweets on screen to update their user friendly post time
         var updateTweetTime = setInterval(function()
         {
           $('.postTime').each(function(i, obj)
           {
-            //console.log(moment($(obj).data("posttime")).fromNow());
             $(obj).text(moment($(obj).data("posttime")).fromNow());
           });
         }, 60000);
