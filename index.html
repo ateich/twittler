@@ -2,6 +2,7 @@
 <html>
   <head>
     <script src="jquery.js"></script>
+    <script type="date.js"></script>
     <script src="data_generator.js"></script>
   </head>
   <body>
@@ -12,13 +13,61 @@
         $body.html('');
 
         var index = streams.home.length - 1;
+        var lastTweetTime;
+
+        //Loop through and add tweets
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
+          addTweetTo(tweet, $body);
           index -= 1;
+
+          //Keep track of the most recent tweets posting time
+          var tweetTime = Date.parse(tweet.created_at);
+          if(!lastTweetTime || tweetTime > lastTweetTime)
+          {
+            lastTweetTime = tweetTime;
+          }
         }
+
+        function addTweetTo(tweet, appendTo)
+        {
+          var $tweet = $('<div><p></p></div>');
+
+          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+          $tweet.append('<p>' + tweet.created_at + '</p>');
+
+          $tweet.appendTo(appendTo);
+        }
+
+        //Check for newer tweets every 1 minute
+        var checkForNewTweets = setInterval(function(){
+
+          var $newTweets = $('<div></div>');
+          var index = streams.home.length - 1;
+
+          var tweet = streams.home[index];
+          var latestTweetTime = Date.parse(tweet.created_at);
+
+          if(latestTweetTime > lastTweetTime)
+          {
+            var tweetsAdded = 0;
+            //There are new tweets to be added to the screen
+            while(latestTweetTime > lastTweetTime)
+            {
+              tweetsAdded+=1;
+              addTweetTo(tweet, $newTweets);
+
+              index-=1;
+              tweet = streams.home[index];
+
+              //lastTweetTime = latestTweetTime;
+              latestTweetTime = Date.parse(tweet.created_at);
+            }
+
+            latestTweetTime = Date.parse(streams.home[0].created_at);
+            $newTweets.prependTo($body);
+          }
+        }, 3000);
 
       });
 
