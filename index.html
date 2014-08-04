@@ -4,6 +4,7 @@
     <script src="jquery.js"></script>
     <script type="date.js"></script>
     <script src="data_generator.js"></script>
+    <script src="moment.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
@@ -34,9 +35,11 @@
         {
           var $tweet = $('<div class="tweet"></div>');
 
+          var postTime = moment(tweet.created_at).fromNow();
+
           $tweet.append('<p class="username">' + tweet.user + '</p>');
           $tweet.append('<p>' + tweet.message + '</p>');
-          $tweet.append('<p>' + tweet.created_at + '</p>');
+          $tweet.append('<p>' + postTime + '</p>');
           $tweet.append('<hr/>');
 
           $tweet.appendTo(appendTo);
