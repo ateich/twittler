@@ -39,7 +39,7 @@
 
           $tweet.append('<p class="username">' + tweet.user + '</p>');
           $tweet.append('<p>' + tweet.message + '</p>');
-          $tweet.append('<p>' + postTime + '</p>');
+          $tweet.append('<p class="postTime" data-postTime="' + tweet.created_at + '">' + postTime + '</p>');
           $tweet.append('<hr/>');
 
           $tweet.appendTo(appendTo);
@@ -73,7 +73,17 @@
             latestTweetTime = Date.parse(streams.home[0].created_at);
             $newTweets.prependTo($body);
           }
-        }, 3000);
+        }, 60000);
+
+        //Every minute, loop through tweets on screen to update their user friendly post time
+        var updateTweetTime = setInterval(function()
+        {
+          $('.postTime').each(function(i, obj)
+          {
+            //console.log(moment($(obj).data("posttime")).fromNow());
+            $(obj).text(moment($(obj).data("posttime")).fromNow());
+          });
+        }, 60000);
 
       });
 
