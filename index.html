@@ -30,7 +30,7 @@
 
           var postTime = moment(tweet.created_at).fromNow();
 
-          $tweet.append('<a href="#test-popup" class="open-popup-link username"><p>' + tweet.user + '</p></a>');
+          $tweet.append('<a href="#test-popup" class="open-popup-link username" data-user="' + tweet.user + '"><p>' + tweet.user + '</p></a>');
           $tweet.append('<p>' + tweet.message + '</p>');
           $tweet.append('<p class="postTime" data-postTime="' + tweet.created_at + '">' + postTime + '</p>');
           $tweet.append('<hr/>');
@@ -69,11 +69,17 @@
 
           //Enable clicking on username to open user twitter stream
           $('.open-popup-link').magnificPopup({
-            items: {
-                src: '<div class="white-popup">Dynamically created popup</div>',
-                type: 'inline'
+            closeBtnInside: true,
+            callbacks : {
+              elementParse : function(item){
+                var usernameClicked = this.st.el.data('user');
+                item.src = '<div class="white-popup">' + usernameClicked + '</div>';
+              }
             },
-            closeBtnInside: true
+            items: {
+                src: '',
+                type: 'inline'
+            }
           });
         }
 
