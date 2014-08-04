@@ -25,7 +25,26 @@ body
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.tweet .username
+.tweet a .username
 {
 	font-weight: bold;
+}
+
+.white-popup {
+  position: fixed;
+  background: #666;
+  padding: 20px;
+
+  width: 500px;
+  left: 50%;
+  margin-left: -250px;
+
+  height:90%;
+
+  z-index: 100;
+}
+
+.mfp-preloader
+{
+	display: none;
 }
