@@ -70,6 +70,10 @@ h1, h2, h3, h4, h5, h6
   padding-top:10px;
   width: 540px;
   left: 50%;
+}
+
+.topBanner.username
+{
   margin-left: -249px;
 }
 
@@ -101,4 +105,9 @@ h1, h2, h3, h4, h5, h6
 	position: fixed;
 	left: 50%;
 	margin-left: 250px;
+}
+
+.userTweets
+{
+	padding-top:10px;
 }

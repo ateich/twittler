@@ -91,7 +91,6 @@
               elementParse : function(item){
                 
                 //Stop loading new tweets while in user stream
-                console.log("INVALIDATE UPDATE TWEET TIME");
                 clearInterval(updateTweetTime);
                 clearInterval(checkForNewTweets);
 
@@ -104,10 +103,10 @@
                 src += '<div class="username topBanner">' + usernameClicked + '<button class="mfp-close closeUser">X</button></div>';
 
                 //Add Feed
-                var $userTweets = $('<div></div>');
+                var $userTweets = $('<div class="userTweets"></div>');
                 findAndAddNewTweets(streams.users[usernameClicked], $userTweets, true);
-                
-                src += $userTweets.html();
+                src += '<div class="userTweets">' + $userTweets.html() + '</div>';
+                console.log(src);
 
                 //Close popup HTML
                 src += '</div>';
