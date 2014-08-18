@@ -21,6 +21,7 @@
         var lastTweetTime = 0;
 
         var tweetCount = 0;
+        var tweetUpdateTime = 1000;
 
         findAndAddNewTweets(streams.home);
 
@@ -41,7 +42,7 @@
         //Check for newer tweets every 1 minute
         var checkForNewTweets = setInterval(function(){
           findAndAddNewTweets(streams.home);
-        }, 1000);
+        }, tweetUpdateTime);
 
         function findAndAddNewTweets(stream, element)
         {
@@ -111,7 +112,7 @@
                 updateTweetTime = setInterval(updateTweets, 60000);
                 checkForNewTweets = setInterval(function(){
                   findAndAddNewTweets(streams.home);
-                }, 60000);
+                }, tweetUpdateTime);
               }
             },
             items: {
