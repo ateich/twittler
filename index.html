@@ -14,16 +14,19 @@
     <script>
 
       $(document).ready(function(){
+        var tweetUpdateTime = 10000;
+
         var $body = $('body');
-        $body.html('');
+        $body.html('<div id="welcome" class="topBanner"><h2>Welcome to Twittler!</h2><h4>Feed Updates Every ' + tweetUpdateTime/1000 + ' Seconds</h4></div>'  );
+        $feedHTML = $('<div id="feed"></div>');
+        $feedHTML.appendTo($body);
 
         var index = streams.home.length - 1;
         var lastTweetTime = 0;
 
         var tweetCount = 0;
-        var tweetUpdateTime = 1000;
 
-        findAndAddNewTweets(streams.home);
+        findAndAddNewTweets(streams.home, $feedHTML, false);
 
         function addTweetTo(tweet, appendTo)
         {
@@ -39,18 +42,22 @@
           $tweet.appendTo(appendTo);
         }
 
-        //Check for newer tweets every 1 minute
+        //Check for newer tweets every {tweetUpdateTime} seconds
         var checkForNewTweets = setInterval(function(){
-          findAndAddNewTweets(streams.home);
+          findAndAddNewTweets(streams.home, $feedHTML, false);
         }, tweetUpdateTime);
 
-        function findAndAddNewTweets(stream, element)
+        function findAndAddNewTweets(stream, element, addAllTweets)
         {
           var localTweetCount = 0;
 
           if(!element)
           {
-            element = $body;
+            element = $feedHTML;
+          }
+
+          if(!addAllTweets)
+          {
             localTweetCount = tweetCount;
           }
 
@@ -70,7 +77,7 @@
             localTweetCount += 1;
           }
 
-          if(!element)
+          if(!addAllTweets)
           {
             tweetCount = localTweetCount;
           }
@@ -84,6 +91,7 @@
               elementParse : function(item){
                 
                 //Stop loading new tweets while in user stream
+                console.log("INVALIDATE UPDATE TWEET TIME");
                 clearInterval(updateTweetTime);
                 clearInterval(checkForNewTweets);
 
@@ -93,11 +101,11 @@
                 var src = '<div class="white-popup">';
 
                 //Username at top
-                src += '<div class="username">' + usernameClicked + '</div>';
+                src += '<div class="username topBanner">' + usernameClicked + '<button class="mfp-close closeUser">X</button></div>';
 
                 //Add Feed
                 var $userTweets = $('<div></div>');
-                findAndAddNewTweets(streams.users[usernameClicked], $userTweets);
+                findAndAddNewTweets(streams.users[usernameClicked], $userTweets, true);
                 
                 src += $userTweets.html();
 
@@ -109,9 +117,9 @@
               {
                 console.log("CLOSING USER VIEW");
                 //Start loading new tweets when exiting user stream
-                updateTweetTime = setInterval(updateTweets, 60000);
+                updateTweetTime = setInterval(updateTweets, tweetUpdateTime);
                 checkForNewTweets = setInterval(function(){
-                  findAndAddNewTweets(streams.home);
+                  findAndAddNewTweets(streams.home, $feedHTML, false);
                 }, tweetUpdateTime);
               }
             },
@@ -123,7 +131,7 @@
         }
 
         //Every minute, loop through tweets on screen to update their user friendly post time
-        var updateTweetTime = setInterval(updateTweets, 60000);
+        var updateTweetTime = setInterval(function(){updateTweets();}, 60000);
 
         var updateTweets = function()
         {
